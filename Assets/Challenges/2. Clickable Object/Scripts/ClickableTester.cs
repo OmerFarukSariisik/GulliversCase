@@ -204,7 +204,6 @@ namespace Challenges._2._Clickable_Object.Scripts
         
         private void ClickableClicked(ClickableObject clickedObject, ClickableObject.InteractionMethod interactionMethod)
         {
-            
             if (Time.time - _tapTimes[clickedObject] < 0.05f)
             {
                 Debug.LogWarning("Tap was called very shortly after last input. Make sure you're not calling multiple callbacks at the same time");

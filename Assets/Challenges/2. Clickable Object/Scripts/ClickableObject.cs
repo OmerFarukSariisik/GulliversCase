@@ -31,7 +31,29 @@ namespace Challenges._2._Clickable_Object.Scripts
         [SerializeField]
         private InteractionMethod allowedInteractionMethods;
 
+        OnClickableClicked myCallBack;
 
+        public void Tapped(int method)
+        {
+            switch (method)
+            {
+                case 1:
+                    if(allowedInteractionMethods.HasFlag(InteractionMethod.Tap))
+                        myCallBack.Invoke(this, InteractionMethod.Tap);
+                    break;
+                case 2:
+                    if (allowedInteractionMethods.HasFlag(InteractionMethod.DoubleTap))
+                        myCallBack.Invoke(this, InteractionMethod.DoubleTap);
+                    break;
+                case 3:
+                    if (allowedInteractionMethods.HasFlag(InteractionMethod.TapAndHold))
+                        myCallBack.Invoke(this, InteractionMethod.TapAndHold);
+                    break;
+                default:
+                    break;
+            }
+            //myCallBack.Invoke(this, allowedInteractionMethods);
+        }
 
         /// <summary>
         /// Checks if the given interaction method is valid for this clickable object.
@@ -49,7 +71,7 @@ namespace Challenges._2._Clickable_Object.Scripts
         /// </summary>
         public void SetInteractionMethod(InteractionMethod method)
         {
-            
+            allowedInteractionMethods = method;
         }
         
         
@@ -59,6 +81,7 @@ namespace Challenges._2._Clickable_Object.Scripts
         /// <param name="callback">Function to invoke</param>
         public void RegisterToClickable(OnClickableClicked callback)
         {
+            myCallBack += callback;
         }
 
         /// <summary>
@@ -67,6 +90,7 @@ namespace Challenges._2._Clickable_Object.Scripts
         /// <param name="callback">Function previously given</param>
         public void UnregisterFromClickable(OnClickableClicked callback)
         {
+            myCallBack -= callback;
         }
 
         /// <summary>
@@ -74,10 +98,14 @@ namespace Challenges._2._Clickable_Object.Scripts
         /// </summary>
         /// <param name="onTapCallback"></param>
         /// <exception cref="InvalidInteractionMethodException">If tapping is not allowed for this clickable</exception>
-        public void RegisterToClickableTap(OnClickableClickedUnspecified onTapCallback) 
+        public void RegisterToClickableTap(OnClickableClickedUnspecified onTapCallback)
         {
+            if(!allowedInteractionMethods.HasFlag(InteractionMethod.Tap))
+                throw new InvalidInteractionMethodException(gameObject.name, allowedInteractionMethods);
+
+
         }
-        
+
         /// <summary>
         /// Will invoke the given callback when the clickable object is tapped. 
         /// </summary>
@@ -85,6 +113,10 @@ namespace Challenges._2._Clickable_Object.Scripts
         /// <exception cref="InvalidInteractionMethodException">If double tapping is not allowed for this clickable</exception>
         public void RegisterToClickableDoubleTap(OnClickableClickedUnspecified onTapCallback) 
         {
+            if (!allowedInteractionMethods.HasFlag(InteractionMethod.DoubleTap))
+                throw new InvalidInteractionMethodException(gameObject.name, allowedInteractionMethods);
+
+
         }
         
     }
