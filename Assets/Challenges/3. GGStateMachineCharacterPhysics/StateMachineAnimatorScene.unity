@@ -153,7 +153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers:
-  - {fileID: 11400000, guid: edd34c06175f5476a8b46884d5391bdc, type: 2}
   - {fileID: 11400000, guid: 842adc5d76b3646c3b27ae08d0f4eb69, type: 2}
   _monoInstallers: []
   _installerPrefabs: []
@@ -960,6 +959,18 @@ PrefabInstance:
     - target: {fileID: 569653574970678599, guid: 1b7b2f7af7dd944f99098fcde840c131, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569653574970678618, guid: 1b7b2f7af7dd944f99098fcde840c131, type: 3}
+      propertyPath: layerMask.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 569653574970678618, guid: 1b7b2f7af7dd944f99098fcde840c131, type: 3}
+      propertyPath: characterMovementConfig.maxSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 569653574970678618, guid: 1b7b2f7af7dd944f99098fcde840c131, type: 3}
+      propertyPath: characterMovementConfig.accelerationByTime
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 569653575225093869, guid: 1b7b2f7af7dd944f99098fcde840c131, type: 3}
       propertyPath: m_Layer

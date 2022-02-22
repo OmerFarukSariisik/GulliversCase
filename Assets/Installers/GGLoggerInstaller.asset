@@ -9,24 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 425369286, guid: e5362af5da64145f68798b323c49d1d2, type: 3}
+  m_Script: {fileID: 0}
   m_Name: GGLoggerInstaller
   m_EditorClassIdentifier: 
-  Notes: 'While typing sender email address, you should check email security rules
-    because most email services doesnt allow the third party apps sending email.
-    Ex. Google says that you must visit this site https://www.google.com/settings/security/lesssecureapps
-    and make email less secure. '
-  loggerSettings:
-    fileName: gg
-    fileType: .log
-    maxEntryCount: 10
-    autoSaveInterval: 10000
-    maxArchiveFiles: 5
-    consoleOutput: 0
-    isProduction: 0
-    senderEmailAdress: 
-    senderEmailPassword: 
-    recevierEmail: 
-    emailSubject: 
-    emailBody: 
-  useFileLogger: 0

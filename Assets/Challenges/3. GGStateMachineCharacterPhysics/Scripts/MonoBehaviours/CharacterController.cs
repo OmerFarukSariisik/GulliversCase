@@ -99,8 +99,12 @@ namespace Challenges._3._GGStateMachineCharacterPhysics.Scripts.MonoBehaviours
 
         #region EDIT
         // You should only need to edit in this region, you can add any variables you wish.
-        
 
+        [SerializeField]
+        LayerMask layerMask;
+        Vector3 velocity = new Vector3();
+        Vector3 gravityOffset = new Vector3(0f, 0.01f, 0f);
+        Vector3 blockerOffset = new Vector3(0f, 0.1f, 0f);
        
         //Add your states under this function
         private void SetupStateMachineStates()
@@ -120,7 +124,7 @@ namespace Challenges._3._GGStateMachineCharacterPhysics.Scripts.MonoBehaviours
             _stateMachine.SwitchToState<ExampleState>();
             // SwitchToState will clear the current queue and add the input as next state (after the currently active one ends)
         }
-        
+
         // CharacterInput.cs will call this function every frame in Update. xzPlaneMovementVector specifies the current input.
         // Ex:
         // (W is pressed) -> (0,1) ;
@@ -128,9 +132,115 @@ namespace Challenges._3._GGStateMachineCharacterPhysics.Scripts.MonoBehaviours
         // (W and S) -> (0,0) ;
         // (A and S) -> (-1,-1) ;
         // (A) -> (-1,0)
+
         public void SetCurrentMovement(Vector2 xzPlaneMovementVector)
         {
-            
+            xzPlaneMovementVector.Normalize();
+
+            if(xzPlaneMovementVector.x != 0)
+            {
+                velocity.x = velocity.x * characterMovementConfig.WithInputVelocityDamping + 
+                    (xzPlaneMovementVector.x * characterMovementConfig.AccelerationByTime * Time.deltaTime);
+            }
+            else
+            {
+                velocity.x *= characterMovementConfig.NoInputVelocityDamping;
+            }
+
+            if (xzPlaneMovementVector.y != 0)
+            {
+                velocity.z = velocity.z * characterMovementConfig.WithInputVelocityDamping +
+                    (xzPlaneMovementVector.y * characterMovementConfig.AccelerationByTime * Time.deltaTime);
+            }
+            else
+            {
+                velocity.z *= characterMovementConfig.NoInputVelocityDamping;
+            }
+
+            GroundControl();
+            BlockerControl(characterMovementConfig.CharacterRadius / 2f);
+            Move();
+        }
+
+        private void BlockerControl(float maxDistance)
+        {
+            if(velocity.x > 0f)
+            {
+                if (Physics.Raycast(transform.position + blockerOffset, transform.right, out RaycastHit hitInfo, maxDistance, layerMask))
+                {
+                    WalkableBlocker(hitInfo, true);
+                }
+            }
+            else if(velocity.x < 0f)
+            {
+                if (Physics.Raycast(transform.position + blockerOffset, -transform.right, out RaycastHit hitInfo, maxDistance, layerMask))
+                {
+                    WalkableBlocker(hitInfo, true);
+                }
+            }
+
+            if (velocity.z > 0f)
+            {
+                if (Physics.Raycast(transform.position + blockerOffset, transform.forward, out RaycastHit hitInfo, maxDistance, layerMask))
+                {
+                    WalkableBlocker(hitInfo, false);
+                }
+            }
+            else if (velocity.z < 0f)
+            {
+                if (Physics.Raycast(transform.position + blockerOffset, -transform.forward, out RaycastHit hitInfo, maxDistance, layerMask))
+                {
+                    WalkableBlocker(hitInfo, false);
+                }
+            }
+        }
+
+        private void WalkableBlocker(RaycastHit hitInfo, bool isXaxis)
+        {
+            float angle = Vector3.Angle(hitInfo.normal, transform.up);
+
+            if (isXaxis)
+            {
+                if (angle < 45f)
+                {
+                    velocity.y = angle / 3f;
+                }
+                else
+                    velocity.x = 0f;
+            }
+            else
+            {
+                if (angle < 45f)
+                {
+                    velocity.y = angle / 3f;
+                }
+                else
+                    velocity.z = 0f;
+            }
+        }
+
+        private void GroundControl()
+        {
+            if (!Physics.Raycast(transform.position + gravityOffset, -transform.up, 0.1f, layerMask))
+            {
+                velocity.y = velocity.y * characterMovementConfig.MidAirXZVelocityDamping -
+                    (characterMovementConfig.Gravity * Time.deltaTime);
+            }
+            else
+            {
+                velocity.y = 0f;
+            }
+        }
+
+        private void Move()
+        {
+            if (velocity.magnitude > characterMovementConfig.MAXSpeed)
+            {
+                velocity.Normalize();
+                velocity *= characterMovementConfig.MAXSpeed;
+            }
+
+            transform.Translate(velocity * Time.deltaTime);
         }
         
         #endregion
