@@ -18,5 +18,6 @@ MonoBehaviour:
   childInitialJumpHeight: 4
   childTravelDistance: 15
   childBounceCount: 8
+  childBounceFalloff: 0
   childDamage: 20
   childExplosionRadius: 7
