@@ -28,6 +28,12 @@ namespace Challenges._5._Complex_Loading_Bar.Scripts
         private int _currentMinimum;
         private int _currentMaximum;
 
+        public void SetCurrentMinAndMax(int min, int max)
+        {
+            _currentMaximum = max;
+            _currentMinimum = min;
+        }
+
         public void RandomizeThreshold()
         {
             List<int> thresholds = new List<int>();

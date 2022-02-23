@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Challenges._5._Complex_Loading_Bar.Scripts;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -67,6 +68,8 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
         private bool isCalculating = false;
         #endregion
 
+        [SerializeField] private LoopableProgressBar loopableProgressBar;
+
         private void Awake()
         {
             percentageText = percentage.GetComponent<TextMeshProUGUI>();
@@ -109,7 +112,12 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
         /// <param name="value">Must be in range [0,1]</param>
         public void ForceValue(float value)
         {
-            SetPercentInstantly(value);
+            SetPercentInstantly(value, false);
+        }
+
+        public void ForceValue(float value, bool control)
+        {
+            SetPercentInstantly(value, control);
         }
 
         /// <summary>
@@ -128,20 +136,20 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
             if (value > lastValue)
             {
                 if (snapOptions == ProgressSnapOptions.SnapToHigherValue)
-                    SetPercentInstantly(value);
+                    SetPercentInstantly(value, true);
                 else
                     StartCoroutine(IncreasePercentSmoothly(value));
             }
             else if(value < lastValue)
             {
                 if (snapOptions == ProgressSnapOptions.SnapToLowerValue)
-                    SetPercentInstantly(value);
+                    SetPercentInstantly(value, true);
                 else
                     StartCoroutine(DecreasePercentSmoothly(value));
             }
         }
 
-        private void SetPercentInstantly(float value, bool isSmooth = false)
+        private void SetPercentInstantly(float value, bool control, bool isSmooth = false)
         {
             float newBarOffset = barWidth - (barWidth * value) + barHorizontalOffset;
             fillBar.offsetMax = new Vector2(-newBarOffset, fillBar.offsetMax.y);
@@ -151,6 +159,9 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
 
             if(!isSmooth)
                 lastValue = value;
+
+            if(control)
+                loopableProgressBar.TriggerOnBarComplete();
         }
 
         private IEnumerator IncreasePercentSmoothly(float value)
@@ -169,13 +180,14 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
                 else
                     lastValue += Time.deltaTime * baseSpeed / 10f;
 
-                SetPercentInstantly(lastValue, true);
+                SetPercentInstantly(lastValue, false, true);
 
                 yield return null;
             }
 
-            SetPercentInstantly(value);
+            SetPercentInstantly(value, false);
             isCalculating = false;
+            loopableProgressBar.TriggerOnBarComplete();
         }
 
         private IEnumerator DecreasePercentSmoothly(float value)
@@ -194,13 +206,14 @@ namespace Challenges._1._Basic_Progress_Bar.Scripts
                 else
                     lastValue -= Time.deltaTime * baseSpeed / 10f;
 
-                SetPercentInstantly(lastValue, true);
+                SetPercentInstantly(lastValue,false, true);
 
                 yield return null;
             }
 
-            SetPercentInstantly(value);
+            SetPercentInstantly(value, false);
             isCalculating = false;
+            loopableProgressBar.TriggerOnBarComplete();
         }
     }
 }
